@@ -58,3 +58,15 @@ lspconfig.tailwindcss.setup({
     },
   },
 })
+
+lspconfig.zls.setup({
+  -- If 'zls' is in your PATH, this is enough.
+  -- If not, uncomment the line below and add the full path:
+  -- cmd = { "/path/to/your/custom/zls" },
+
+  settings = {
+    zls = {
+      -- enable_autofix = true,
+    },
+  },
+})
