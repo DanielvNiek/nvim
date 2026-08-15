@@ -10,6 +10,7 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.wrap = true
   end,
 })
+vim.opt.colorcolumn = "101"
 
 require("lspconfig").yamlls.setup({
   settings = {
@@ -67,6 +68,17 @@ lspconfig.zls.setup({
   settings = {
     zls = {
       -- enable_autofix = true,
+    },
+  },
+})
+
+lspconfig["rust_analyzer"].setup({
+  settings = {
+    ["rust-analyzer"] = {
+      procMacro = { enable = true },
+      rustfmt = {
+        overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
+      },
     },
   },
 })

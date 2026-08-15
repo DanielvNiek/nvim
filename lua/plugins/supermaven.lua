@@ -17,7 +17,7 @@ return {
     local api = require("supermaven-nvim.api")
     api.use_free_version()
     api.toggle()
-    vim.keymap.set("n", "<leader>a", function()
+    vim.keymap.set("n", "<leader>i", function()
       api.toggle()
     end, { noremap = true, silent = true, desc = "Toggle Supermaven" })
   end,
