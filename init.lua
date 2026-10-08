@@ -3,6 +3,8 @@ vim.o.relativenumber = true
 vim.o.clipboard = "unnamedplus"
 vim.o.undofile = true
 vim.o.autoread = true
+vim.o.scrolloff = 8
+vim.o.wrap = false
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2
@@ -28,7 +30,8 @@ vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Save" })
 vim.keymap.set("n", "<leader>q", ":qa<CR>", { desc = "Quit" })
 vim.keymap.set("n", "<leader>R", ":restart<CR>", { desc = "Restart" })
 vim.keymap.set("n", "<leader>w", ":bd<CR>", { desc = "Delete buffer" })
-vim.keymap.set("n", '<leader>W', '<cmd>silent! execute "%bd|e#|bd#"<cr>', { desc = 'Delete other buffers' })
+vim.keymap.set("n", '<leader>o', '<cmd>silent! execute "%bd|e#|bd#"<cr>', { desc = 'Delete other buffers' })
+vim.keymap.set("n", "<leader>\\", ":set invwrap<CR>", { desc = 'Toggle wrap' })
 vim.keymap.set({ "n", "v" }, '<leader>a', vim.lsp.buf.code_action, { desc = 'Code action' })
 vim.keymap.set("n", "<leader><space>", function() Snacks.picker.smart() end, { desc = "Smart find files" })
 vim.keymap.set("n", "<leader>f", function() Snacks.picker.files() end, { desc = "Find files" })
@@ -91,3 +94,18 @@ end, { expr = true })
 vim.keymap.set("i", "}", function()
 	return vim.fn.strpart(vim.fn.getline('.'), vim.fn.col('.') - 1, 1) == "}" and "<Right>" or "}"
 end, { expr = true })
+
+-- Restore cursor location in file
+vim.api.nvim_create_autocmd("BufReadPost", {
+	callback = function(args)
+		local mark = vim.api.nvim_buf_get_mark(args.buf, '"')
+		local line_count = vim.api.nvim_buf_line_count(args.buf)
+		if mark[1] > 0 and mark[1] <= line_count then
+			vim.api.nvim_win_set_cursor(0, mark)
+			-- defer centering slightly so it's applied after render
+			vim.schedule(function()
+				vim.cmd("normal! zz")
+			end)
+		end
+	end,
+})
