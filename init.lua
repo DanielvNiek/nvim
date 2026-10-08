@@ -45,6 +45,7 @@ vim.keymap.set("n", "<leader>d", function() Snacks.picker.git_diff() end, { desc
 vim.keymap.set("n", "<leader>k", function() Snacks.picker.keymaps() end, { desc = "View keymaps" })
 vim.keymap.set("n", "<leader>s", function() Snacks.picker.lsp_symbols() end, { desc = "File LSP symbols" })
 vim.keymap.set("n", "<leader>S", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "Workspace LSP symbols" })
+vim.keymap.set("n", "<leader>C", function() Snacks.picker.colorschemes() end, { desc = "Workspace LSP symbols" })
 vim.keymap.set("n", "gd", function() Snacks.picker.lsp_definitions() end, { desc = "Goto Definition" })
 vim.keymap.set("n", "gD", function() Snacks.picker.lsp_declarations() end, { desc = "Goto Declaration" })
 vim.keymap.set("n", "gr", function() Snacks.picker.lsp_references() end, { nowait = true, desc = "References" })

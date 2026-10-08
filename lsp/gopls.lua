@@ -4,6 +4,7 @@ return {
 	root_markers = { "go.mod" },
 	settings = {
 		gopls = {
+			semanticTokens = true,
 			analyses = {
 				unusedparams = true,  -- Warn about unused function parameters
 				shadow = true,        -- Warn about variable shadowing
