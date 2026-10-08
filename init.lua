@@ -32,6 +32,29 @@ vim.lsp.enable({
 	'rust_analyzer',
 })
 
+-- Ensure mason packages are installed
+local registry = require("mason-registry")
+local mason_packages = {
+	"lua-language-server",
+	"ty",
+	"gopls",
+	"rust-analyzer",
+	"zls",
+}
+registry.refresh(function()
+	for _, pkg_name in ipairs(mason_packages) do
+		local ok, pkg = pcall(registry.get_package, pkg_name)
+		if ok then
+			if not pkg:is_installed() then
+				-- Triggers asynchronous installation in the background
+				pkg:install()
+			end
+		else
+			vim.notify("Mason: Package not found: " .. pkg_name, vim.log.levels.WARN)
+		end
+	end
+end)
+
 -- Setup keymaps
 vim.g.mapleader = " "
 vim.keymap.set("i", "<C-space>", "<C-x><C-o>", { desc = "Trigger autocomplete" })
