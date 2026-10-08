@@ -12,17 +12,25 @@ vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.diagnostic.config({ virtual_lines = true })
 vim.o.completeopt = "menu,menuone,noinsert,fuzzy"
 
-
 -- Install and configure plugins
 vim.pack.add({
+	'https://github.com/neovim/nvim-lspconfig',
+	'https://github.com/mason-org/mason.nvim',
 	'https://github.com/folke/snacks.nvim',
 	'https://github.com/nvim-tree/nvim-web-devicons',
-	'https://github.com/neovim/nvim-lspconfig',
 })
+require("mason").setup()
 require("snacks").setup({
 	picker = { enabled = true },
 })
-vim.lsp.enable({ 'lua_ls', 'ty', 'gopls', 'rust_analyzer' })
+
+-- Enable LSPs
+vim.lsp.enable({
+	'lua_ls',
+	'ty',
+	'gopls',
+	'rust_analyzer',
+})
 
 -- Setup keymaps
 vim.g.mapleader = " "
@@ -31,6 +39,7 @@ vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Save" })
 vim.keymap.set("n", "<leader>q", ":qa<CR>", { desc = "Quit" })
 vim.keymap.set("n", "<leader>R", ":restart<CR>", { desc = "Restart" })
 vim.keymap.set("n", "<leader>w", ":bd<CR>", { desc = "Delete buffer" })
+vim.keymap.set("n", "<leader>m", ":Mason<CR>", { desc = "Mason" })
 vim.keymap.set("n", '<leader>o', '<cmd>silent! execute "%bd|e#|bd#"<cr>', { desc = 'Delete other buffers' })
 vim.keymap.set("n", "<leader>\\", ":set invwrap<CR>", { desc = 'Toggle wrap' })
 vim.keymap.set({ "n", "v" }, '<leader>a', vim.lsp.buf.code_action, { desc = 'Code action' })
