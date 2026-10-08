@@ -10,7 +10,7 @@ vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.diagnostic.config({ virtual_lines = true })
 vim.o.completeopt = "menu,menuone,noinsert,fuzzy"
 
-vim.lsp.enable({ 'lua-language-server', 'ty', 'gopls' })
+vim.lsp.enable({ 'lua-language-server', 'ty', 'gopls', 'rust-analyzer' })
 
 -- Install and configure plugins
 vim.pack.add({
