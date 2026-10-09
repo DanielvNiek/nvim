@@ -10,14 +10,16 @@ vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.diagnostic.config({ virtual_lines = true })
-vim.o.completeopt = "menu,menuone,noinsert,fuzzy"
+vim.o.completeopt = "menu,menuone,noinsert,fuzzy,popup"
+vim.opt.colorcolumn = "101"
 
 -- Install and configure plugins
 vim.pack.add({
 	"https://github.com/neovim/nvim-lspconfig",
 	"https://github.com/mason-org/mason.nvim",
 	"https://github.com/folke/snacks.nvim",
-	"https://github.com/nvim-mini/mini.icons",
+	"https://github.com/nvim-mini/mini.nvim",
+	"https://github.com/b0o/SchemaStore.nvim",
 })
 require("mason").setup()
 require("snacks").setup({
@@ -25,6 +27,7 @@ require("snacks").setup({
 	notifier = { enabled = true },
 })
 require('mini.icons').setup()
+require('mini.pairs').setup()
 
 -- Enable LSPs
 vim.lsp.enable({
@@ -34,6 +37,7 @@ vim.lsp.enable({
 	"rust_analyzer",
 	"zls",
 	"yamlls",
+	"jsonls",
 	"dockerls",
 })
 
@@ -46,6 +50,7 @@ local mason_packages = {
 	"rust-analyzer",
 	"zls",
 	"yaml-language-server",
+	"json-lsp",
 	"dockerfile-language-server",
 }
 
