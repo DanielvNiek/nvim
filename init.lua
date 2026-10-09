@@ -57,7 +57,7 @@ registry.refresh(function()
 
 				-- Triggers asynchronous installation in the background
 				pkg:install({}, function(success, err)
-					if ! success then
+					if not success then
 						vim.notify("Failed to install " .. pkg_name .. ": " .. vim.inspect(err), vim.log.levels.ERROR)
 					end
 				end)
