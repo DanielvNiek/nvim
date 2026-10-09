@@ -14,22 +14,26 @@ vim.o.completeopt = "menu,menuone,noinsert,fuzzy"
 
 -- Install and configure plugins
 vim.pack.add({
-	'https://github.com/neovim/nvim-lspconfig',
-	'https://github.com/mason-org/mason.nvim',
-	'https://github.com/folke/snacks.nvim',
-	'https://github.com/nvim-tree/nvim-web-devicons',
+	"https://github.com/neovim/nvim-lspconfig",
+	"https://github.com/mason-org/mason.nvim",
+	"https://github.com/folke/snacks.nvim",
+	"https://github.com/nvim-tree/nvim-web-devicons",
 })
 require("mason").setup()
 require("snacks").setup({
 	picker = { enabled = true },
+	notifier = { enabled = true },
 })
 
 -- Enable LSPs
 vim.lsp.enable({
-	'lua_ls',
-	'ty',
-	'gopls',
-	'rust_analyzer',
+	"lua_ls",
+	"ty",
+	"gopls",
+	"rust_analyzer",
+	"zls",
+	"yamlls",
+	"dockerls",
 })
 
 -- Ensure mason packages are installed
@@ -40,17 +44,26 @@ local mason_packages = {
 	"gopls",
 	"rust-analyzer",
 	"zls",
+	"yaml-language-server",
+	"dockerfile-language-server",
 }
+
 registry.refresh(function()
 	for _, pkg_name in ipairs(mason_packages) do
 		local ok, pkg = pcall(registry.get_package, pkg_name)
 		if ok then
 			if not pkg:is_installed() then
+				vim.notify("Installing mason package: " .. pkg_name, vim.log.levels.INFO)
+
 				-- Triggers asynchronous installation in the background
-				pkg:install()
+				pkg:install({}, function(success, err)
+					if ! success then
+						vim.notify("Failed to install " .. pkg_name .. ": " .. vim.inspect(err), vim.log.levels.ERROR)
+					end
+				end)
 			end
 		else
-			vim.notify("Mason: Package not found: " .. pkg_name, vim.log.levels.WARN)
+			vim.notify("Mason package not found: " .. pkg_name, vim.log.levels.ERROR)
 		end
 	end
 end)
@@ -63,9 +76,9 @@ vim.keymap.set("n", "<leader>q", ":qa<CR>", { desc = "Quit" })
 vim.keymap.set("n", "<leader>R", ":restart<CR>", { desc = "Restart" })
 vim.keymap.set("n", "<leader>w", ":bd<CR>", { desc = "Delete buffer" })
 vim.keymap.set("n", "<leader>m", ":Mason<CR>", { desc = "Mason" })
-vim.keymap.set("n", '<leader>o', '<cmd>silent! execute "%bd|e#|bd#"<cr>', { desc = 'Delete other buffers' })
-vim.keymap.set("n", "<leader>\\", ":set invwrap<CR>", { desc = 'Toggle wrap' })
-vim.keymap.set({ "n", "v" }, '<leader>a', vim.lsp.buf.code_action, { desc = 'Code action' })
+vim.keymap.set("n", "<leader>o", '<cmd>silent! execute "%bd|e#|bd#"<cr>', { desc = "Delete other buffers" })
+vim.keymap.set("n", "<leader>\\", ":set invwrap<CR>", { desc = "Toggle wrap" })
+vim.keymap.set({ "n", "v" }, "<leader>a", vim.lsp.buf.code_action, { desc = "Code action" })
 vim.keymap.set("n", "<leader><space>", function() Snacks.picker.smart() end, { desc = "Smart find files" })
 vim.keymap.set("n", "<leader>f", function() Snacks.picker.files() end, { desc = "Find files" })
 vim.keymap.set("n", "<leader>/", function() Snacks.picker.grep() end, { desc = "Grep" })
@@ -82,6 +95,7 @@ vim.keymap.set("n", "<leader>k", function() Snacks.picker.keymaps() end, { desc 
 vim.keymap.set("n", "<leader>s", function() Snacks.picker.lsp_symbols() end, { desc = "File LSP symbols" })
 vim.keymap.set("n", "<leader>S", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "Workspace LSP symbols" })
 vim.keymap.set("n", "<leader>C", function() Snacks.picker.colorschemes() end, { desc = "Workspace LSP symbols" })
+vim.keymap.set("n", "<leader>n", function() Snacks.picker.notifications() end, { desc = "Notifications" })
 vim.keymap.set("n", "gd", function() Snacks.picker.lsp_definitions() end, { desc = "Goto Definition" })
 vim.keymap.set("n", "gD", function() Snacks.picker.lsp_declarations() end, { desc = "Goto Declaration" })
 vim.keymap.set("n", "gr", function() Snacks.picker.lsp_references() end, { nowait = true, desc = "References" })
@@ -111,22 +125,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.highlight.on_yank({ timeout = 150, visual = true })
 	end,
 })
-
--- Automatically close brackets
-vim.keymap.set("i", "(", "()<Left>", { noremap = true })
-vim.keymap.set("i", "[", "[]<Left>", { noremap = true })
-vim.keymap.set("i", "{", "{}<Left>", { noremap = true })
-
--- Don't retype closing brackets
-vim.keymap.set("i", ")", function()
-	return vim.fn.strpart(vim.fn.getline('.'), vim.fn.col('.') - 1, 1) == ")" and "<Right>" or ")"
-end, { expr = true })
-vim.keymap.set("i", "]", function()
-	return vim.fn.strpart(vim.fn.getline('.'), vim.fn.col('.') - 1, 1) == "]" and "<Right>" or "]"
-end, { expr = true })
-vim.keymap.set("i", "}", function()
-	return vim.fn.strpart(vim.fn.getline('.'), vim.fn.col('.') - 1, 1) == "}" and "<Right>" or "}"
-end, { expr = true })
 
 -- Restore cursor location in file
 vim.api.nvim_create_autocmd("BufReadPost", {
