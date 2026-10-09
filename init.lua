@@ -36,6 +36,7 @@ vim.pack.add({
 	"https://github.com/nvim-mini/mini.nvim",
 	"https://github.com/b0o/SchemaStore.nvim",
 	"https://github.com/nvim-lualine/lualine.nvim",
+	"https://github.com/nvim-treesitter/nvim-treesitter",
 })
 require("mason").setup()
 require("snacks").setup({
@@ -47,6 +48,7 @@ MiniIcons.mock_nvim_web_devicons()
 require('mini.pairs').setup()
 require('lualine').setup({})
 
+-- Setup tree sitters
 -- Enable LSPs
 vim.lsp.enable({
 	"lua_ls",
@@ -70,6 +72,7 @@ local mason_packages = {
 	"yaml-language-server",
 	"json-lsp",
 	"dockerfile-language-server",
+	"tree-sitter-cli"
 }
 registry.refresh(function()
 	for _, pkg_name in ipairs(mason_packages) do
@@ -90,6 +93,19 @@ registry.refresh(function()
 		end
 	end
 end)
+
+-- Setup tree sitter targets
+local tree_sitter_targets = { "dockerfile", "go", "rust", "python", "zig", "yaml", "json" }
+require("nvim-treesitter").install(tree_sitter_targets)
+vim.o.foldlevel = 99
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = tree_sitter_targets,
+	callback = function()
+		vim.treesitter.start()
+		vim.wo[0][0].foldmethod = "expr"
+		vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+	end,
+})
 
 -- Setup keymaps
 vim.g.mapleader = " "
@@ -119,12 +135,15 @@ vim.keymap.set("n", "<leader>k", function() Snacks.picker.keymaps() end, { desc 
 vim.keymap.set("n", "<leader>s", function() Snacks.picker.lsp_symbols() end, { desc = "File LSP symbols" })
 vim.keymap.set("n", "<leader>S", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "Workspace LSP symbols" })
 vim.keymap.set("n", "<leader>C", function() Snacks.picker.colorschemes() end, { desc = "Workspace LSP symbols" })
-vim.keymap.set("n", "<leader>n", function() Snacks.picker.notifications() end, { desc = "Notifications" })
+vim.keymap.set("n", "<leader>!", function() Snacks.picker.notifications() end, { desc = "Notifications" })
 vim.keymap.set("n", "gd", function() Snacks.picker.lsp_definitions() end, { desc = "Goto Definition" })
 vim.keymap.set("n", "gD", function() Snacks.picker.lsp_declarations() end, { desc = "Goto Declaration" })
 vim.keymap.set("n", "gr", function() Snacks.picker.lsp_references() end, { nowait = true, desc = "References" })
 vim.keymap.set("n", "gI", function() Snacks.picker.lsp_implementations() end, { desc = "Goto Implementation" })
 vim.keymap.set("n", "gy", function() Snacks.picker.lsp_type_definitions() end, { desc = "Goto T[y]pe Definition" })
+vim.keymap.set('n', '<leader>n', vim.lsp.buf.rename, { desc = 'LSP rename symbol' })
+vim.keymap.set('n', 'f', "za", { desc = 'Toggle fold' })
+vim.keymap.set('n', 'F', "zR", { desc = 'Open all folds' })
 
 -- Trigger autocomplete while typing
 vim.api.nvim_create_autocmd("LspAttach", {
