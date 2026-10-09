@@ -95,7 +95,7 @@ registry.refresh(function()
 end)
 
 -- Setup tree sitter targets
-local tree_sitter_targets = { "dockerfile", "go", "rust", "python", "zig", "yaml", "json" }
+local tree_sitter_targets = { "lua", "dockerfile", "go", "rust", "python", "zig", "yaml", "json" }
 require("nvim-treesitter").install(tree_sitter_targets)
 vim.o.foldlevel = 99
 vim.api.nvim_create_autocmd("FileType", {
