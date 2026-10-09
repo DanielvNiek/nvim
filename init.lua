@@ -17,13 +17,14 @@ vim.pack.add({
 	"https://github.com/neovim/nvim-lspconfig",
 	"https://github.com/mason-org/mason.nvim",
 	"https://github.com/folke/snacks.nvim",
-	"https://github.com/nvim-tree/nvim-web-devicons",
+	"https://github.com/nvim-mini/mini.icons",
 })
 require("mason").setup()
 require("snacks").setup({
 	picker = { enabled = true },
 	notifier = { enabled = true },
 })
+require('mini.icons').setup()
 
 -- Enable LSPs
 vim.lsp.enable({
