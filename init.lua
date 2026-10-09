@@ -71,7 +71,6 @@ local mason_packages = {
 	"json-lsp",
 	"dockerfile-language-server",
 }
-
 registry.refresh(function()
 	for _, pkg_name in ipairs(mason_packages) do
 		local ok, pkg = pcall(registry.get_package, pkg_name)
@@ -102,6 +101,7 @@ vim.keymap.set("n", "<leader>w", ":bd<CR>", { desc = "Delete buffer" })
 vim.keymap.set("n", "<leader>m", ":Mason<CR>", { desc = "Mason" })
 vim.keymap.set("n", "<leader>o", '<cmd>silent! execute "%bd|e#|bd#"<cr>', { desc = "Delete other buffers" })
 vim.keymap.set("n", "<leader>\\", ":set invwrap<CR>", { desc = "Toggle wrap" })
+vim.keymap.set("n", "n", ":bn<CR>", { desc = "Next buffer" })
 vim.keymap.set({ "n", "v" }, "<leader>a", vim.lsp.buf.code_action, { desc = "Code action" })
 vim.keymap.set("n", "<leader><space>", function() Snacks.picker.smart() end, { desc = "Smart find files" })
 vim.keymap.set("n", "<leader>f", function() Snacks.picker.files() end, { desc = "Find files" })
