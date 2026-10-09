@@ -12,7 +12,21 @@ vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.diagnostic.config({ virtual_lines = true })
 vim.o.completeopt = "menu,menuone,noinsert,fuzzy,popup"
 vim.opt.colorcolumn = "101"
+
+-- Only show cmd line on commands or macro recordings
 vim.opt.cmdheight = 0
+vim.api.nvim_create_autocmd("RecordingEnter", {
+	callback = function()
+		vim.opt.cmdheight = 1
+	end,
+})
+
+vim.api.nvim_create_autocmd("RecordingLeave", {
+	callback = function()
+		vim.opt.cmdheight = 0
+	end,
+})
+
 
 -- Install and configure plugins
 vim.pack.add({
