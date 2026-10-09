@@ -12,6 +12,7 @@ vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.diagnostic.config({ virtual_lines = true })
 vim.o.completeopt = "menu,menuone,noinsert,fuzzy,popup"
 vim.opt.colorcolumn = "101"
+vim.opt.cmdheight = 0
 
 -- Install and configure plugins
 vim.pack.add({
@@ -20,6 +21,7 @@ vim.pack.add({
 	"https://github.com/folke/snacks.nvim",
 	"https://github.com/nvim-mini/mini.nvim",
 	"https://github.com/b0o/SchemaStore.nvim",
+	"https://github.com/nvim-lualine/lualine.nvim",
 })
 require("mason").setup()
 require("snacks").setup({
@@ -27,7 +29,9 @@ require("snacks").setup({
 	notifier = { enabled = true },
 })
 require('mini.icons').setup()
+MiniIcons.mock_nvim_web_devicons()
 require('mini.pairs').setup()
+require('lualine').setup({})
 
 -- Enable LSPs
 vim.lsp.enable({
