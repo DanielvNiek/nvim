@@ -76,6 +76,8 @@ vim.lsp.enable({
 	"jsonls",
 	"dockerls",
 	"taplo",
+	"html",
+	"cssls",
 })
 
 -- Ensure mason packages are installed
@@ -91,6 +93,8 @@ local mason_packages = {
 	"dockerfile-language-server",
 	"tree-sitter-cli",
 	"taplo",
+	"css-lsp",
+	"html-lsp",
 }
 registry.refresh(function()
 	for _, pkg_name in ipairs(mason_packages) do
