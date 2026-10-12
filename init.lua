@@ -40,6 +40,7 @@ vim.pack.add({
 	"https://github.com/nvim-treesitter/nvim-treesitter",
 	"https://github.com/saecki/crates.nvim",
 	"https://github.com/lewis6991/gitsigns.nvim",
+	"https://github.com/jake-stewart/multicursor.nvim",
 })
 require("mason").setup()
 require("snacks").setup({
@@ -49,20 +50,19 @@ require("snacks").setup({
 require('mini.icons').setup()
 MiniIcons.mock_nvim_web_devicons()
 require('mini.pairs').setup()
+require('mini.files').setup()
 require('lualine').setup({})
 require('gitsigns').setup({})
 require('crates').setup({
 	lsp = {
 		enabled = true,
-		on_attach = function(client, bufnr)
-			-- the same on_attach function as for your other language servers
-			-- can be ommited if you're using the `LspAttach` autocmd
-		end,
 		actions = true,
 		completion = true,
 		hover = true,
 	},
 })
+local mc = require("multicursor-nvim")
+mc.setup()
 
 -- Setup tree sitters
 -- Enable LSPs
@@ -98,8 +98,6 @@ registry.refresh(function()
 		if ok then
 			if not pkg:is_installed() then
 				vim.notify("Installing mason package: " .. pkg_name, vim.log.levels.INFO)
-
-				-- Triggers asynchronous installation in the background
 				pkg:install({}, function(success, err)
 					if not success then
 						vim.notify("Failed to install " .. pkg_name .. ": " .. vim.inspect(err), vim.log.levels.ERROR)
@@ -127,42 +125,58 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- Setup keymaps
 vim.g.mapleader = " "
-vim.keymap.set("i", "<C-space>", "<C-x><C-o>", { desc = "Trigger autocomplete" })
-vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Save" })
-vim.keymap.set("n", "<leader>q", ":qa<CR>", { desc = "Quit" })
-vim.keymap.set("n", "<leader>R", ":restart<CR>", { desc = "Restart" })
-vim.keymap.set("n", "<leader>w", ":bd<CR>", { desc = "Delete buffer" })
-vim.keymap.set("n", "<leader>m", ":Mason<CR>", { desc = "Mason" })
-vim.keymap.set("n", "<leader>o", '<cmd>silent! execute "%bd|e#|bd#"<cr>', { desc = "Delete other buffers" })
-vim.keymap.set("n", "<leader>\\", ":set invwrap<CR>", { desc = "Toggle wrap" })
-vim.keymap.set("n", "<Tab>", ":bn<CR>", { desc = "Next buffer" })
-vim.keymap.set("n", "<S-Tab>", ":bp<CR>", { desc = "Previous buffer" })
-vim.keymap.set({ "n", "v" }, "<leader>a", vim.lsp.buf.code_action, { desc = "Code action" })
-vim.keymap.set("n", "<leader><space>", function() Snacks.picker.smart() end, { desc = "Smart find files" })
-vim.keymap.set("n", "<leader>f", function() Snacks.picker.files() end, { desc = "Find files" })
-vim.keymap.set("n", "<leader>/", function() Snacks.picker.grep() end, { desc = "Grep" })
-vim.keymap.set("n", "<leader>b", function() Snacks.picker.buffers() end, { desc = "Buffers" })
-vim.keymap.set("n", "<leader>r", function() Snacks.picker.recent() end, { desc = "Recent files" })
-vim.keymap.set("n", "<leader>?", function() Snacks.picker.help() end, { desc = "Help pages" })
-vim.keymap.set("n", "<leader>e", function() Snacks.explorer() end, { desc = "File explorer" })
-vim.keymap.set("n", "<leader>g", function() Snacks.lazygit() end, { desc = "Lazygit" })
-vim.keymap.set("n", "<leader>l", ":checkhealth lsp<CR>", { desc = "LSP health" })
-vim.keymap.set("n", "<leader>L", ":lsp restart<CR>", { desc = "LSP restart" })
-vim.keymap.set("n", "<leader>h", function() Snacks.lazygit.log_file() end, { desc = "Lazygit file history" })
-vim.keymap.set("n", "<leader>d", function() Snacks.picker.git_diff() end, { desc = "Git diff" })
-vim.keymap.set("n", "<leader>k", function() Snacks.picker.keymaps() end, { desc = "View keymaps" })
-vim.keymap.set("n", "<leader>s", function() Snacks.picker.lsp_symbols() end, { desc = "File LSP symbols" })
-vim.keymap.set("n", "<leader>S", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "Workspace LSP symbols" })
-vim.keymap.set("n", "<leader>C", function() Snacks.picker.colorschemes() end, { desc = "Workspace LSP symbols" })
-vim.keymap.set("n", "<leader>!", function() Snacks.picker.notifications() end, { desc = "Notifications" })
-vim.keymap.set("n", "gd", function() Snacks.picker.lsp_definitions() end, { desc = "Goto Definition" })
-vim.keymap.set("n", "gD", function() Snacks.picker.lsp_declarations() end, { desc = "Goto Declaration" })
-vim.keymap.set("n", "gr", function() Snacks.picker.lsp_references() end, { nowait = true, desc = "References" })
-vim.keymap.set("n", "gI", function() Snacks.picker.lsp_implementations() end, { desc = "Goto Implementation" })
-vim.keymap.set("n", "gy", function() Snacks.picker.lsp_type_definitions() end, { desc = "Goto T[y]pe Definition" })
-vim.keymap.set('n', '<leader>n', vim.lsp.buf.rename, { desc = 'LSP rename symbol' })
-vim.keymap.set('n', 'f', "za", { desc = 'Toggle fold' })
-vim.keymap.set('n', 'F', "zR", { desc = 'Open all folds' })
+local mapkey = vim.keymap.set
+mapkey("i", "<C-space>", "<C-x><C-o>", { desc = "Trigger autocomplete" })
+mapkey("n", "<C-s>", ":w<CR>", { desc = "Save" })
+mapkey("n", "<leader>q", ":qa<CR>", { desc = "Quit" })
+mapkey("n", "<leader>R", ":restart<CR>", { desc = "Restart" })
+mapkey("n", "<leader>w", ":bd<CR>", { desc = "Delete buffer" })
+mapkey("n", "<leader>m", ":Mason<CR>", { desc = "Mason" })
+mapkey("n", "<leader>o", '<cmd>silent! execute "%bd|e#|bd#"<cr>', { desc = "Delete other buffers" })
+mapkey("n", "<leader>\\", ":set invwrap<CR>", { desc = "Toggle wrap" })
+mapkey("n", "<Tab>", ":bn<CR>", { desc = "Next buffer" })
+mapkey("n", "<S-Tab>", ":bp<CR>", { desc = "Previous buffer" })
+mapkey({ "n", "v" }, "<leader>a", vim.lsp.buf.code_action, { desc = "Code action" })
+mapkey("n", "<leader><space>", function() Snacks.picker.smart() end, { desc = "Smart find files" })
+mapkey("n", "<leader>f", function() Snacks.picker.files() end, { desc = "Find files" })
+mapkey("n", "<leader>/", function() Snacks.picker.grep() end, { desc = "Grep" })
+mapkey("n", "<leader>b", function() Snacks.picker.buffers() end, { desc = "Buffers" })
+mapkey("n", "<leader>F", function() Snacks.picker.recent() end, { desc = "Recent files" })
+mapkey("n", "<leader>?", function() Snacks.picker.help() end, { desc = "Help pages" })
+mapkey("n", "<leader>e", function() Snacks.explorer() end, { desc = "File explorer" })
+mapkey("n", "<leader>g", function() Snacks.lazygit() end, { desc = "Lazygit" })
+mapkey("n", "<leader>l", ":checkhealth lsp<CR>", { desc = "LSP health" })
+mapkey("n", "<leader>L", ":lsp restart<CR>", { desc = "LSP restart" })
+mapkey("n", "<leader>h", function() Snacks.lazygit.log_file() end, { desc = "Lazygit file history" })
+mapkey("n", "<leader>d", function() Snacks.picker.git_diff() end, { desc = "Git diff" })
+mapkey("n", "<leader>k", function() Snacks.picker.keymaps() end, { desc = "View keymaps" })
+mapkey("n", "<leader>s", function() Snacks.picker.lsp_symbols() end, { desc = "File LSP symbols" })
+mapkey("n", "<leader>S", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "Workspace LSP symbols" })
+mapkey("n", "<leader>t", function() Snacks.picker.colorschemes() end, { desc = "Workspace LSP symbols" })
+mapkey("n", "<leader>.", function() MiniFiles.open(vim.api.nvim_buf_get_name(0)) end,
+	{ desc = "Workspace LSP symbols" })
+mapkey("n", "<leader>!", function() Snacks.picker.notifications() end, { desc = "Notifications" })
+mapkey("n", "gd", function() Snacks.picker.lsp_definitions() end, { desc = "Goto Definition" })
+mapkey("n", "gD", function() Snacks.picker.lsp_declarations() end, { desc = "Goto Declaration" })
+mapkey("n", "gr", function() Snacks.picker.lsp_references() end, { nowait = true, desc = "References" })
+mapkey("n", "gI", function() Snacks.picker.lsp_implementations() end, { desc = "Goto Implementation" })
+mapkey("n", "gy", function() Snacks.picker.lsp_type_definitions() end, { desc = "Goto T[y]pe Definition" })
+mapkey('n', '<leader>r', vim.lsp.buf.rename, { desc = 'LSP rename symbol' })
+mapkey('n', 'f', "za", { desc = 'Toggle fold' })
+mapkey('n', 'F', "zR", { desc = 'Open all folds' })
+mapkey({ "n", "v" }, "<leader>n", function() mc.matchAddCursor(1) end)
+mapkey({ "n", "v" }, "<leader>N", function() mc.matchSkipCursor(1) end)
+mapkey({ "n", "v" }, "<leader>p", function() mc.matchAddCursor(-1) end)
+mapkey({ "n", "v" }, "<leader>P", function() mc.matchSkipCursor(-1) end)
+mapkey("n", "<c-leftmouse>", mc.handleMouse)
+mapkey({ "n", "x" }, "<leader>c", mc.toggleCursor)
+mapkey({ "n", "x" }, "<leader>C", function()
+	if not mc.cursorsEnabled() then
+		mc.enableCursors()
+	else
+		mc.clearCursors()
+	end
+end)
 
 -- Trigger autocomplete while typing
 vim.api.nvim_create_autocmd("LspAttach", {
