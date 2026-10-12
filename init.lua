@@ -4,6 +4,7 @@ vim.o.clipboard = "unnamedplus"
 vim.o.undofile = true
 vim.o.autoread = true
 vim.o.scrolloff = 8
+vim.o.signcolumn = "yes"
 vim.o.wrap = false
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
@@ -37,6 +38,8 @@ vim.pack.add({
 	"https://github.com/b0o/SchemaStore.nvim",
 	"https://github.com/nvim-lualine/lualine.nvim",
 	"https://github.com/nvim-treesitter/nvim-treesitter",
+	"https://github.com/saecki/crates.nvim",
+	"https://github.com/lewis6991/gitsigns.nvim",
 })
 require("mason").setup()
 require("snacks").setup({
@@ -47,6 +50,19 @@ require('mini.icons').setup()
 MiniIcons.mock_nvim_web_devicons()
 require('mini.pairs').setup()
 require('lualine').setup({})
+require('gitsigns').setup({})
+require('crates').setup({
+	lsp = {
+		enabled = true,
+		on_attach = function(client, bufnr)
+			-- the same on_attach function as for your other language servers
+			-- can be ommited if you're using the `LspAttach` autocmd
+		end,
+		actions = true,
+		completion = true,
+		hover = true,
+	},
+})
 
 -- Setup tree sitters
 -- Enable LSPs
@@ -59,6 +75,7 @@ vim.lsp.enable({
 	"yamlls",
 	"jsonls",
 	"dockerls",
+	"taplo",
 })
 
 -- Ensure mason packages are installed
@@ -72,7 +89,8 @@ local mason_packages = {
 	"yaml-language-server",
 	"json-lsp",
 	"dockerfile-language-server",
-	"tree-sitter-cli"
+	"tree-sitter-cli",
+	"taplo",
 }
 registry.refresh(function()
 	for _, pkg_name in ipairs(mason_packages) do
