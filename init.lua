@@ -220,3 +220,29 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 		end
 	end,
 })
+
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(args)
+		local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+		-- Ensure the LSP client supports document highlighting
+		if client and client.server_capabilities.documentHighlightProvider then
+			local group = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = false })
+
+			-- Highlight references when the cursor rests on a word
+			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+				buffer = args.buf,
+				group = group,
+				callback = vim.lsp.buf.document_highlight,
+			})
+
+			-- Clear highlights immediately when the cursor moves
+			vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+				buffer = args.buf,
+				group = group,
+				callback = vim.lsp.buf.clear_references,
+			})
+		end
+	end,
+})
+vim.opt.updatetime = 300
