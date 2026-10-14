@@ -8,7 +8,18 @@ return {
 				-- Avoid TypeError: Cannot read properties of undefined (reading 'length')
 				url = "",
 			},
-			schemas = require('schemastore').yaml.schemas(),
+			schemas = require('schemastore').yaml.schemas({
+				extra = {
+					{
+						name = 'lima.yaml',
+						description = 'Lima VM config (limactl generate-jsonschema)',
+						url = 'file://' .. vim.fn.expand('~/.config/nvim/schemas/lima.json'),
+						fileMatch = {
+							'*.lima.yaml',
+						},
+					},
+				},
+			}),
 		},
 	},
 }
