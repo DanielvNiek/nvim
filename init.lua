@@ -13,6 +13,8 @@ vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.diagnostic.config({ virtual_lines = true })
 vim.o.completeopt = "menu,menuone,noinsert,fuzzy,popup"
 vim.opt.colorcolumn = "101"
+vim.cmd("set ignorecase")
+vim.cmd("set smartcase")
 
 -- Only show cmd line on commands or macro recordings
 vim.opt.cmdheight = 0
