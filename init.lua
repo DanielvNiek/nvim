@@ -80,6 +80,7 @@ vim.lsp.enable({
 	"taplo",
 	"html",
 	"cssls",
+	"bashls",
 })
 
 -- Ensure mason packages are installed
@@ -97,6 +98,7 @@ local mason_packages = {
 	"taplo",
 	"css-lsp",
 	"html-lsp",
+	"bash-language-server",
 }
 registry.refresh(function()
 	for _, pkg_name in ipairs(mason_packages) do
