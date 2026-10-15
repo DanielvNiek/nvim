@@ -38,7 +38,6 @@ vim.pack.add({
 	"https://github.com/folke/snacks.nvim",
 	"https://github.com/nvim-mini/mini.nvim",
 	"https://github.com/b0o/SchemaStore.nvim",
-	"https://github.com/nvim-lualine/lualine.nvim",
 	"https://github.com/nvim-treesitter/nvim-treesitter",
 	"https://github.com/saecki/crates.nvim",
 	"https://github.com/lewis6991/gitsigns.nvim",
@@ -53,7 +52,6 @@ require('mini.icons').setup()
 MiniIcons.mock_nvim_web_devicons()
 require('mini.pairs').setup()
 require('mini.files').setup()
-require('lualine').setup({})
 require('gitsigns').setup({})
 require('crates').setup({
 	lsp = {
