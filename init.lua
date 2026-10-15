@@ -134,6 +134,8 @@ vim.api.nvim_create_autocmd("FileType", {
 -- Setup keymaps
 vim.g.mapleader = " "
 local mapkey = vim.keymap.set
+mapkey('n', '<C-h>', '<C-w>h', { desc = 'Go to left window' })
+mapkey('n', '<C-l>', '<C-w>l', { desc = 'Go to left window' })
 mapkey("i", "<C-space>", "<C-x><C-o>", { desc = "Trigger autocomplete" })
 mapkey("n", "<C-s>", ":w<CR>", { desc = "Save" })
 mapkey("n", "<leader>q", ":qa<CR>", { desc = "Quit" })
@@ -198,8 +200,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 -- Autoformat on save
 vim.api.nvim_create_autocmd("BufWritePre", {
-	callback = function()
-		vim.lsp.buf.format({ async = false })
+	callback = function(args)
+		local clients = vim.lsp.get_clients({
+			bufnr = args.buf,
+			method = "textDocument/formatting",
+		})
+		if #clients > 0 then
+			vim.lsp.buf.format({ bufnr = args.buf, async = false })
+		end
 	end,
 })
 
