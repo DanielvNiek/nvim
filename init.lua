@@ -256,3 +256,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 vim.opt.updatetime = 300
+
+-- Trigger path completion on "/" character
+vim.keymap.set('i', '/', function()
+	vim.api.nvim_feedkeys('/', 'n', false)
+	vim.schedule(function()
+		-- Trigger completion menu if desired
+		vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-x><C-f>', true, true, true), 'n')
+	end)
+end, { expr = true })
