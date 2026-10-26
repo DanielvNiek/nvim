@@ -51,7 +51,15 @@ require("snacks").setup({
 require('mini.icons').setup()
 MiniIcons.mock_nvim_web_devicons()
 require('mini.pairs').setup()
-require('mini.files').setup()
+require('mini.files').setup({
+	content = {
+		filter = nil,
+	},
+	mappings = {
+		go_in      = '<CR>', -- Open file/directory and close the explorer
+		go_in_plus = 'l',    -- Open file/directory and keep the explorer open
+	},
+})
 require('gitsigns').setup({})
 require('crates').setup({
 	lsp = {
