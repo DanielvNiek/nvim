@@ -42,6 +42,7 @@ vim.pack.add({
 	"https://github.com/saecki/crates.nvim",
 	"https://github.com/lewis6991/gitsigns.nvim",
 	"https://github.com/jake-stewart/multicursor.nvim",
+	"https://github.com/dawidd6/nvim-sops",
 })
 require("mason").setup()
 require("snacks").setup({
@@ -57,7 +58,7 @@ require('mini.files').setup({
 	},
 	mappings = {
 		go_in      = '<CR>', -- Open file/directory and close the explorer
-		go_in_plus = 'l',    -- Open file/directory and keep the explorer open
+		go_in_plus = 'l',  -- Open file/directory and keep the explorer open
 	},
 })
 require('gitsigns').setup({})
@@ -69,6 +70,9 @@ require('crates').setup({
 		hover = true,
 	},
 })
+local sops = require('sops')
+sops.auto_edit = false
+sops.setup()
 local mc = require("multicursor-nvim")
 mc.setup()
 
@@ -171,6 +175,7 @@ mapkey("n", "<leader>k", function() Snacks.picker.keymaps() end, { desc = "View 
 mapkey("n", "<leader>s", function() Snacks.picker.lsp_symbols() end, { desc = "File LSP symbols" })
 mapkey("n", "<leader>S", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "Workspace LSP symbols" })
 mapkey("n", "<leader>t", function() Snacks.picker.colorschemes() end, { desc = "Workspace LSP symbols" })
+mapkey("n", "<leader>x", function() sops.edit() end, { desc = "Edit sops file" })
 mapkey("n", "<leader>.", function() MiniFiles.open(vim.api.nvim_buf_get_name(0)) end,
 	{ desc = "Workspace LSP symbols" })
 mapkey("n", "<leader>!", function() Snacks.picker.notifications() end, { desc = "Notifications" })
