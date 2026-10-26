@@ -79,6 +79,7 @@ vim.lsp.enable({
 	"html",
 	"cssls",
 	"bashls",
+	"buf_ls",
 })
 
 -- Ensure mason packages are installed
@@ -97,6 +98,7 @@ local mason_packages = {
 	"css-lsp",
 	"html-lsp",
 	"bash-language-server",
+	"buf",
 }
 registry.refresh(function()
 	for _, pkg_name in ipairs(mason_packages) do
