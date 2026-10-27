@@ -57,8 +57,8 @@ require('mini.files').setup({
 		filter = nil,
 	},
 	mappings = {
-		go_in      = '<CR>', -- Open file/directory and close the explorer
-		go_in_plus = 'l',  -- Open file/directory and keep the explorer open
+		go_in      = 'l',  -- Open file/directory and close the explorer
+		go_in_plus = '<CR>', -- Open file/directory and keep the explorer open
 	},
 })
 require('gitsigns').setup({})
