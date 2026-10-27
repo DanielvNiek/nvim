@@ -43,6 +43,7 @@ vim.pack.add({
 	"https://github.com/lewis6991/gitsigns.nvim",
 	"https://github.com/jake-stewart/multicursor.nvim",
 	"https://github.com/dawidd6/nvim-sops",
+	"https://github.com/akinsho/bufferline.nvim",
 })
 require("mason").setup()
 require("snacks").setup({
@@ -75,6 +76,16 @@ sops.auto_edit = false
 sops.setup()
 local mc = require("multicursor-nvim")
 mc.setup()
+require('bufferline').setup({
+	options = {
+		diagnostics = 'nvim_lsp',
+		separator_style = '',
+		diagnostics_indicator = function(count, level)
+			local icon = level:match('error') and ' ' or ' '
+			return icon .. count
+		end,
+	},
+})
 
 -- Setup tree sitters
 -- Enable LSPs
