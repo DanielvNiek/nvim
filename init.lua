@@ -49,6 +49,7 @@ require("mason").setup()
 require("snacks").setup({
 	picker = { enabled = true },
 	notifier = { enabled = true },
+	indent = {},
 })
 require('mini.icons').setup()
 MiniIcons.mock_nvim_web_devicons()
